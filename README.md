@@ -1,6 +1,6 @@
 # Git repository for Galaxy and the Universe 2 Term Project #
 
-Memebers/
+Memebers\
 Beomchan, Koh/
 Sohee, Kim /
 Seohyun, Jang
