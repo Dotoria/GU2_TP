@@ -1,7 +1,4 @@
-# GU2_TP
-#############################################################
 # Git repository for Galaxy and the Universe 2 Term Project #
-#############################################################
 
 Memebers
 Beomchan, Koh
