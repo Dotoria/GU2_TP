@@ -8,7 +8,7 @@ import astropy.io.fits as fits
 import spectral as sp
 import spectral.io.aviris as aviris
 from PyAstronomy import pyasl
-
+# GAMA, cluster IDs
 GAMAid = list(SAMI.GAMAdata['CATID'])
 clustid = list(SAMI.clustdata['CATID'])
 CATID = GAMAid + clustid
@@ -16,6 +16,7 @@ CATID.sort()
 #print(len(CATID))
 
 def SAMI_spectra(catid):
+    # loading data
     mypath = './sami/dr3/ifs/'
     vel = '_A_stellar-velocity_default_two-moment.fits'
     disp = '_A_stellar-velocity-dispersion_default_two-moment.fits'
@@ -78,9 +79,10 @@ for id in CATID:
 plt.scatter(np.log10(np.array(N2List)/np.array(HaList)), np.log10(np.array(O3List)/np.array(HbList)),s=0.5,c='black')
 plt.axhline(np.log10(3))
 plt.axvline(np.log10(0.6))
-plt.plot(np.log10(np.array(N2List)/np.array(HaList)),0.61/(np.log10(np.array(N2List)/np.array(HaList))-0.05)+1.3,'--')
+#plt.plot(np.log10(np.array(N2List)/np.array(HaList)),0.61/(np.log10(np.array(N2List)/np.array(HaList))-0.05)+1.3,'--')
 plt.show()
 
+print(AGN)
 
 # img = sp.open_image()
 # print(img)
