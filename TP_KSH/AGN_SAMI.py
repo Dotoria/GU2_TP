@@ -47,20 +47,38 @@ def SAMI_spectra(catid):
     S6731data = dat.removeNan(S6731data)
     S6716data = dat.removeNan(S6716data)
     return Hadata, Hbdata, N2data, O1data, O2data, O3data, S6731data, S6716data
-Ha = []
-Hb = []
-O3 = []
-N2 = []
+
+
+HaList = []
+HbList = []
+O3List = []
+N2List = []
+LINER = []
+Seyfert = []
+AGN = []
 for id in CATID:
     try :
         Hadata, Hbdata, N2data, O1data, O2data, O3data, S6731data, S6716data = SAMI_spectra(int(id))
-        Ha.append(np.max(Hadata))
-        Hb.append(np.max(Hbdata))
-        O3.append(np.max(O3data))
-        N2.append(np.max(N2data))
+        Ha = np.max(Hadata)
+        Hb = np.max(Hbdata)
+        O3 = np.max(O3data)
+        N2 = np.max(N2data)
+        HaList.append(Ha)
+        HbList.append(Hb)
+        O3List.append(O3)
+        N2List.append(N2)
+        if O3/Hb > 3 and N2/Ha > 0.6 :
+            Seyfert.append(id)
+        elif O3/Hb < 3 and N2/Ha > 0.6 :
+            LINER.append(id)
+        elif O3/Hb > 0.61/(np.log10(N2/Ha)-0.05)+1.3:
+            AGN.append(id)
     except(ValueError) : continue
-#plt.imshow(N2data)
-plt.scatter(np.log10(np.array(N2)/np.array(Ha)), np.log10(np.array(O3)/np.array(Hb)),s=0.5,c='black')
+
+plt.scatter(np.log10(np.array(N2List)/np.array(HaList)), np.log10(np.array(O3List)/np.array(HbList)),s=0.5,c='black')
+plt.axhline(np.log10(3))
+plt.axvline(np.log10(0.6))
+plt.plot(np.log10(np.array(N2)/np.array(Ha)),0.61/(np.log10(N2/Ha)-0.05)+1.3,'--')
 plt.show()
 
 
