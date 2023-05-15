@@ -78,7 +78,7 @@ for id in CATID:
 plt.scatter(np.log10(np.array(N2List)/np.array(HaList)), np.log10(np.array(O3List)/np.array(HbList)),s=0.5,c='black')
 plt.axhline(np.log10(3))
 plt.axvline(np.log10(0.6))
-plt.plot(np.log10(np.array(N2)/np.array(Ha)),0.61/(np.log10(N2/Ha)-0.05)+1.3,'--')
+plt.plot(np.log10(np.array(N2List)/np.array(HaList)),0.61/(np.log10(np.array(N2List)/np.array(HaList))-0.05)+1.3,'--')
 plt.show()
 
 
