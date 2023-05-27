@@ -74,26 +74,26 @@ Strong_Sey = []
 Weak_Sey = []
 #print(const.L_sun.value) # 3.828e+26 W
 """
-sdss flux의 단위 nanomaggy : 3.631×1e-6 Jy = 3.631*1e-32 W*s/m^2
+sdss flux의 단위 1e-17 erg/s/cm^2
 """
+solar_lumi_erg = const.L_sun.value * 1e7
 for id in Seyfert:
-    print((cosmo.luminosity_distance(data[data['id']==id]['z']).value * 3.086e+22) ** 2)
-    O3_lumi = 4 * np.pi * ((cosmo.luminosity_distance(data[data['id']==id]['z']).value * 3.086e+22) ** 2) * data[data['id']==id]['O3_flux'] * 3.631 * 1e-32
-    if np.log10(O3_lumi/const.L_sun.value) > 7:
+    O3_lumi = 4 * np.pi * ((cosmo.luminosity_distance(data[data['id']==id]['z']).value * 3.086e+22) ** 2) * data[data['id']==id]['O3_flux'] * 1e-13
+    if np.log10(O3_lumi/solar_lumi_erg) > 7:
         Strong_Sey.append(id)
     else : Weak_Sey.append(id)
 Strong_L = []
 Weak_L = []
 for id in LINER:
-    O3_lumi = 4 * np.pi * (cosmo.luminosity_distance(data[data['id']==id]['z']).value * 3.086e+22) ** 2 * data[data['id']==id]['O3_flux'] * 3.631 * 1e-32
-    if np.log10(O3_lumi/const.L_sun.value) > 7:
+    O3_lumi = 4 * np.pi * (cosmo.luminosity_distance(data[data['id']==id]['z']).value * 3.086e+22) ** 2 * data[data['id']==id]['O3_flux'] * 1e-13
+    if np.log10(O3_lumi/solar_lumi_erg) > 7:
         Strong_L.append(id)
     else : Weak_L.append(id)
 Strong_AGN = []
 Weak_AGN = []
 for id in AGN:
-    O3_lumi = 4 * np.pi * (cosmo.luminosity_distance(data[data['id']==id]['z']).value * 3.086e+22) ** 2 * data[data['id']==id]['O3_flux'] * 3.631 * 1e-32
-    if np.log10(O3_lumi/const.L_sun.value) > 7:
+    O3_lumi = 4 * np.pi * (cosmo.luminosity_distance(data[data['id']==id]['z']).value * 3.086e+22) ** 2 * data[data['id']==id]['O3_flux'] * 1e-13
+    if np.log10(O3_lumi/solar_lumi_erg) > 7:
         Strong_AGN.append(id)
     else : Weak_AGN.append(id)
 print('Strong :',len(Strong_AGN)+len(Strong_L)+len(Strong_Sey))
