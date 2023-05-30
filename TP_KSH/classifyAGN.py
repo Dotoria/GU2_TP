@@ -6,25 +6,25 @@ from astropy import constants as const
 
 dtype = [('id' ,'<f8') ,('z' ,'<f8') ,('z_err' ,'<f8'),('ra' ,'<f8') ,('dec' ,'<f8') ,('g' ,'<f8') ,('r' ,'<f8')
              ,('i' ,'<f8') ,('Ha_flux' ,'<f8') ,('Ha_err' ,'<f8') ,('Hb_flux' ,'<f8'),('Hb_err' ,'<f8'),('O3_flux' ,'<f8'),('O3_err' ,'<f8'),('N2_flux' ,'<f8'),('N2_err' ,'<f8')]
-data0 = np.genfromtxt("GU2_TP_Test2.csv" ,dtype=dtype ,delimiter=',' ,skip_header=1
+data0 = np.genfromtxt("GU2_TP_third_shswjw99.csv" ,dtype=dtype ,delimiter=',' ,skip_header=1
                          ,usecols=(0,1,2,3,4,5,6,7,8,9,10,11,12,13,16,17))
 
 # mag cutting
-cri_mr = data0['r'] < 17.77
-cri_mr2 = data0['r'] > 14.5 # Kauffmann et al. 2003
+# cri_mr = data0['r'] < 17.77
+# cri_mr2 = data0['r'] > 14.5 # Kauffmann et al. 2003
 # cri_z1 = data0['z'] < 0.1
 # cri_z2 = data0['z'] > 0.08
-# cri_snr_Ha = data0['Ha_err'] < 3
-# cri_snr_Hb = data0['Hb_err'] < 3
-# cri_snr_O3 = data0['O3_err'] < 3
-# cri_snr_N2 = data0['N2_err'] < 3
+cri_Ha = data0['Ha_flux'] > 0
+cri_Hb = data0['Hb_flux'] > 0
+cri_O3 = data0['O3_flux'] > 0
+cri_N2 = data0['N2_flux'] > 0
 z0 = data0['z']
 dL0 = cosmo.luminosity_distance(z0).value
 Mr0 = data0['r'] - 5 * np.log10(dL0) + 25
 Mr_limit = 17.77 - 5 * np.log10(max(dL0)) + 25
 cri_Mr = Mr0 < Mr_limit
 cri_dL = dL0 > 0 # Volume limited sampling
-cri = cri_mr & cri_Mr & cri_dL & cri_mr2
+cri = cri_Mr & cri_dL & cri_Hb & cri_Ha & cri_O3 & cri_N2
 data = data0[cri]
 #print('Original data :',data0.shape,'Sampled data :', data.shape)
 
@@ -34,14 +34,17 @@ Hb_list = data['Hb_flux']
 O3_list = data['O3_flux']
 N2_list = data['N2_flux']
 """
-plt.scatter(np.log10(N2_list/Ha_list),np.log(O3_list/Hb_list),s=0.2,c='black',alpha=0.5)
+plt.scatter(np.log10(N2_list/Ha_list),np.log10(O3_list/Hb_list),s=0.2,c='black',alpha=0.5)
 plt.axhline(np.log10(3))
 plt.axvline(np.log10(0.6))
-x = np.linspace(-1.5,-0.1,100)
-y = 0.61 / (x-0.05) + 1.3
-plt.plot(x,y,'r--')
-plt.xlim(-1.5,1)
-plt.ylim(-1.5,1.5)
+x = np.linspace(-2,0.3,100)
+y = 0.61 / (x-0.47) + 1.19
+plt.plot(x,y,'r--',label='Kewley, 2001',lw=0.9)
+x_03 = np.linspace(-2,-0.4,100)
+y_03 = 0.61 / (x-0.05) + 1.3
+plt.plot(x_03,y_03,'g--',label='Kauffmann, 2003',lw=0.9)
+plt.xlim(-2,1)
+plt.ylim(-2,2)
 plt.xlabel(r'[NII] / $h_{\alpha}$')
 plt.ylabel(r'[OIII] / $h_{\beta}$')
 plt.show()
@@ -58,23 +61,25 @@ for i in range(len(Ha_list)):
     Hb = Hb_list[i]
     O3 = O3_list[i]
     N2 = N2_list[i]
-    if (O3 / Hb) < 3 and (N2 / Ha) > 0.6 and np.log10(O3 / Hb) > (0.61 / (np.log10(N2 / Ha) - 0.05) + 1.3):
+    # Kewley2001 : 0.61/((N2/Ha)-0.47)+1.19
+    # Kauffmann2003 : 0.61/((N2/Ha)-0.05)+1.30
+    if (O3 / Hb) < 3 and (N2 / Ha) > 0.6 and np.log10(O3 / Hb) > (0.61 / (np.log10(N2 / Ha) - 0.47) + 1.19):
         LINER.append(int(data['id'][i]))
-    elif (O3 / Hb) > 3 and (N2 / Ha) > 0.6 and np.log10(O3 / Hb) > (0.61 / (np.log10(N2 / Ha) - 0.05) + 1.3):
+    elif (O3 / Hb) > 3 and (N2 / Ha) > 0.6 and np.log10(O3 / Hb) > (0.61 / (np.log10(N2 / Ha) - 0.47) + 1.19):
         Seyfert.append(int(data['id'][i]))
-    elif np.log10(O3 / Hb) > (0.61 / (np.log10(N2 / Ha) - 0.05) + 1.3):
+    elif np.log10(O3 / Hb) > (0.61 / (np.log10(N2 / Ha) - 0.47) + 1.19):
         AGN.append(int(data['id'][i]))
 """Use list name of AGN, Seyfert and LINER"""
-
+print('Seyfert :',len(Seyfert),'LINER :',len(LINER),'AGN :',len(AGN))
 # Weak & Strong
 """
 For L[O3] > 1e7 * L_solar, AGN fraction no longer depends on z/z_max : Strong AGNs
 """
 Strong_Sey = []
 Weak_Sey = []
-#print(const.L_sun.value) # 3.828e+26 W
 """
-sdss flux의 단위 1e-17 erg/s/cm^2
+sdss flux의 단위 1e-17 erg/s/cm^2 = 1e-13 erg/s/m^2
+const.L_sun.value = 3.828e+26 W = 3.828e+33 erg/s
 """
 solar_lumi_erg = const.L_sun.value * 1e7
 for id in Seyfert:
